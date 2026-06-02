@@ -42,16 +42,70 @@ The application and the SQLite database will run within a single Docker containe
 
 ### 4.2. Schema Design
 
-The schema will consist of the tables required by better-auth (Users, Sessions, Accounts) and a custom `notes` table.
+The schema consists of four tables required by better-auth and a custom `notes` table.
+
+**Table: `user`**
+
+| Column | Type | Constraints | Description |
+|---|---|---|---|
+| `id` | TEXT | PRIMARY KEY | Unique identifier for each user. |
+| `name` | TEXT | NOT NULL | User's chosen display name. |
+| `email` | TEXT | NOT NULL UNIQUE | User's email address for communication and login. |
+| `emailVerified` | INTEGER | NOT NULL DEFAULT 0 | Whether the user's email is verified (0 = false, 1 = true). |
+| `image` | TEXT | | User's image URL. |
+| `createdAt` | INTEGER | NOT NULL | Unix timestamp of when the account was created. |
+| `updatedAt` | INTEGER | NOT NULL | Unix timestamp of the last update to the user's information. |
+
+**Table: `session`**
+
+| Column | Type | Constraints | Description |
+|---|---|---|---|
+| `id` | TEXT | PRIMARY KEY | Unique identifier for each session. |
+| `userId` | TEXT | NOT NULL, FK → `user.id` | The ID of the user. |
+| `token` | TEXT | NOT NULL UNIQUE | The unique session token. |
+| `expiresAt` | INTEGER | NOT NULL | Unix timestamp of when the session expires. |
+| `ipAddress` | TEXT | | The IP address of the device. |
+| `userAgent` | TEXT | | The user agent information of the device. |
+| `createdAt` | INTEGER | NOT NULL | Unix timestamp of when the session was created. |
+| `updatedAt` | INTEGER | NOT NULL | Unix timestamp of when the session was last updated. |
+
+**Table: `account`**
+
+| Column | Type | Constraints | Description |
+|---|---|---|---|
+| `id` | TEXT | PRIMARY KEY | Unique identifier for each account. |
+| `userId` | TEXT | NOT NULL, FK → `user.id` | The ID of the user. |
+| `accountId` | TEXT | NOT NULL | The ID of the account as provided by the SSO, or equal to `userId` for credential accounts. |
+| `providerId` | TEXT | NOT NULL | The ID of the provider. |
+| `accessToken` | TEXT | | The access token returned by the provider. |
+| `refreshToken` | TEXT | | The refresh token returned by the provider. |
+| `accessTokenExpiresAt` | INTEGER | | Unix timestamp of when the access token expires. |
+| `refreshTokenExpiresAt` | INTEGER | | Unix timestamp of when the refresh token expires. |
+| `scope` | TEXT | | The scope of the account returned by the provider. |
+| `idToken` | TEXT | | The ID token returned from the provider. |
+| `password` | TEXT | | Hashed password; used for email/password authentication. |
+| `createdAt` | INTEGER | NOT NULL | Unix timestamp of when the account was created. |
+| `updatedAt` | INTEGER | NOT NULL | Unix timestamp of when the account was last updated. |
+
+**Table: `verification`**
+
+| Column | Type | Constraints | Description |
+|---|---|---|---|
+| `id` | TEXT | PRIMARY KEY | Unique identifier for each verification request. |
+| `identifier` | TEXT | NOT NULL | The identifier for the verification request (e.g., email address). |
+| `value` | TEXT | NOT NULL | The value to be verified (e.g., a token). |
+| `expiresAt` | INTEGER | NOT NULL | Unix timestamp of when the verification request expires. |
+| `createdAt` | INTEGER | NOT NULL | Unix timestamp of when the verification request was created. |
+| `updatedAt` | INTEGER | NOT NULL | Unix timestamp of when the verification request was last updated. |
 
 **Table: `notes`**
 
 | Column | Type | Constraints | Description |
 |---|---|---|---|
 | `id` | TEXT | PRIMARY KEY | Unique identifier (UUID or NanoID). |
-| `user_id` | TEXT | FOREIGN KEY | References the `users` table from better-auth. |
+| `user_id` | TEXT | NOT NULL, FK → `user.id` | References the `user` table from better-auth. |
 | `content` | TEXT | NOT NULL | The TipTap rich text data stored as a stringified JSON object. |
-| `is_shared` | INTEGER | DEFAULT 0 | Boolean flag (0 = private, 1 = public). |
+| `is_shared` | INTEGER | NOT NULL DEFAULT 0 | Boolean flag (0 = private, 1 = public). |
 | `created_at` | INTEGER | NOT NULL | Unix timestamp. |
 | `updated_at` | INTEGER | NOT NULL | Unix timestamp. |
 
