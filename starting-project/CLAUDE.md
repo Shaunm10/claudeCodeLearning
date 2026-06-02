@@ -1,5 +1,9 @@
 # CLAUDE.md
 
+We're building the app described in @projectSpec.md . Read that file for general architectural tasks or to double-check the exact database structure, tech stack or application architecture.
+
+Keep your replies extremely concise and focus on conveying the key information. No unnecessary fluff, no long code snippets.
+
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Commands
@@ -32,6 +36,7 @@ Raw `.sql` files live in `scripts/migrations/` (named `0001_*.sql`, `0002_*.sql`
 ### Rich-text editor
 
 **TipTap v3** is used with a fixed extension set — do not add extensions beyond what the spec defines:
+
 - Core: `Document`, `Paragraph`, `Text`
 - Marks: `Bold`, `Italic`
 - Nodes: `Heading` (levels 1–3 only), `BulletList`, `ListItem`, `HorizontalRule`
