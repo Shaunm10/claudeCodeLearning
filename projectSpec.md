@@ -6,16 +6,16 @@ A web-based application allowing authenticated users to create, manage, and publ
 
 ## 2. Technology Stack
 
-| Concern | Technology |
-|---|---|
-| Framework | Next.js (App Router) |
-| Runtime & Package Manager | Bun |
-| Language | TypeScript |
-| Styling | TailwindCSS (Custom-built UI components) |
-| Authentication | better-auth |
-| Rich Text Editor | TipTap |
-| Database | SQLite (via Bun's native `bun:sqlite` API) |
-| Infrastructure | Docker |
+| Concern                   | Technology                                 |
+| ------------------------- | ------------------------------------------ |
+| Framework                 | Next.js (App Router)                       |
+| Runtime & Package Manager | Bun                                        |
+| Language                  | TypeScript                                 |
+| Styling                   | TailwindCSS (Custom-built UI components)   |
+| Authentication            | better-auth                                |
+| Rich Text Editor          | TipTap                                     |
+| Database                  | SQLite (via Bun's native `bun:sqlite` API) |
+| Infrastructure            | Docker                                     |
 
 ## 3. System Architecture & Infrastructure
 
@@ -46,81 +46,81 @@ The schema consists of four tables required by better-auth and a custom `notes` 
 
 **Table: `user`**
 
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | TEXT | PRIMARY KEY | Unique identifier for each user. |
-| `name` | TEXT | NOT NULL | User's chosen display name. |
-| `email` | TEXT | NOT NULL UNIQUE | User's email address for communication and login. |
-| `emailVerified` | INTEGER | NOT NULL DEFAULT 0 | Whether the user's email is verified (0 = false, 1 = true). |
-| `image` | TEXT | | User's image URL. |
-| `createdAt` | INTEGER | NOT NULL | Unix timestamp of when the account was created. |
-| `updatedAt` | INTEGER | NOT NULL | Unix timestamp of the last update to the user's information. |
+| Column          | Type    | Constraints        | Description                                                  |
+| --------------- | ------- | ------------------ | ------------------------------------------------------------ |
+| `id`            | TEXT    | PRIMARY KEY        | Unique identifier for each user.                             |
+| `name`          | TEXT    | NOT NULL           | User's chosen display name.                                  |
+| `email`         | TEXT    | NOT NULL UNIQUE    | User's email address for communication and login.            |
+| `emailVerified` | INTEGER | NOT NULL DEFAULT 0 | Whether the user's email is verified (0 = false, 1 = true).  |
+| `image`         | TEXT    |                    | User's image URL.                                            |
+| `createdAt`     | INTEGER | NOT NULL           | Unix timestamp of when the account was created.              |
+| `updatedAt`     | INTEGER | NOT NULL           | Unix timestamp of the last update to the user's information. |
 
 **Table: `session`**
 
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | TEXT | PRIMARY KEY | Unique identifier for each session. |
-| `userId` | TEXT | NOT NULL, FK → `user.id` | The ID of the user. |
-| `token` | TEXT | NOT NULL UNIQUE | The unique session token. |
-| `expiresAt` | INTEGER | NOT NULL | Unix timestamp of when the session expires. |
-| `ipAddress` | TEXT | | The IP address of the device. |
-| `userAgent` | TEXT | | The user agent information of the device. |
-| `createdAt` | INTEGER | NOT NULL | Unix timestamp of when the session was created. |
-| `updatedAt` | INTEGER | NOT NULL | Unix timestamp of when the session was last updated. |
+| Column      | Type    | Constraints              | Description                                          |
+| ----------- | ------- | ------------------------ | ---------------------------------------------------- |
+| `id`        | TEXT    | PRIMARY KEY              | Unique identifier for each session.                  |
+| `userId`    | TEXT    | NOT NULL, FK → `user.id` | The ID of the user.                                  |
+| `token`     | TEXT    | NOT NULL UNIQUE          | The unique session token.                            |
+| `expiresAt` | INTEGER | NOT NULL                 | Unix timestamp of when the session expires.          |
+| `ipAddress` | TEXT    |                          | The IP address of the device.                        |
+| `userAgent` | TEXT    |                          | The user agent information of the device.            |
+| `createdAt` | INTEGER | NOT NULL                 | Unix timestamp of when the session was created.      |
+| `updatedAt` | INTEGER | NOT NULL                 | Unix timestamp of when the session was last updated. |
 
 **Table: `account`**
 
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | TEXT | PRIMARY KEY | Unique identifier for each account. |
-| `userId` | TEXT | NOT NULL, FK → `user.id` | The ID of the user. |
-| `accountId` | TEXT | NOT NULL | The ID of the account as provided by the SSO, or equal to `userId` for credential accounts. |
-| `providerId` | TEXT | NOT NULL | The ID of the provider. |
-| `accessToken` | TEXT | | The access token returned by the provider. |
-| `refreshToken` | TEXT | | The refresh token returned by the provider. |
-| `accessTokenExpiresAt` | INTEGER | | Unix timestamp of when the access token expires. |
-| `refreshTokenExpiresAt` | INTEGER | | Unix timestamp of when the refresh token expires. |
-| `scope` | TEXT | | The scope of the account returned by the provider. |
-| `idToken` | TEXT | | The ID token returned from the provider. |
-| `password` | TEXT | | Hashed password; used for email/password authentication. |
-| `createdAt` | INTEGER | NOT NULL | Unix timestamp of when the account was created. |
-| `updatedAt` | INTEGER | NOT NULL | Unix timestamp of when the account was last updated. |
+| Column                  | Type    | Constraints              | Description                                                                                 |
+| ----------------------- | ------- | ------------------------ | ------------------------------------------------------------------------------------------- |
+| `id`                    | TEXT    | PRIMARY KEY              | Unique identifier for each account.                                                         |
+| `userId`                | TEXT    | NOT NULL, FK → `user.id` | The ID of the user.                                                                         |
+| `accountId`             | TEXT    | NOT NULL                 | The ID of the account as provided by the SSO, or equal to `userId` for credential accounts. |
+| `providerId`            | TEXT    | NOT NULL                 | The ID of the provider.                                                                     |
+| `accessToken`           | TEXT    |                          | The access token returned by the provider.                                                  |
+| `refreshToken`          | TEXT    |                          | The refresh token returned by the provider.                                                 |
+| `accessTokenExpiresAt`  | INTEGER |                          | Unix timestamp of when the access token expires.                                            |
+| `refreshTokenExpiresAt` | INTEGER |                          | Unix timestamp of when the refresh token expires.                                           |
+| `scope`                 | TEXT    |                          | The scope of the account returned by the provider.                                          |
+| `idToken`               | TEXT    |                          | The ID token returned from the provider.                                                    |
+| `password`              | TEXT    |                          | Hashed password; used for email/password authentication.                                    |
+| `createdAt`             | INTEGER | NOT NULL                 | Unix timestamp of when the account was created.                                             |
+| `updatedAt`             | INTEGER | NOT NULL                 | Unix timestamp of when the account was last updated.                                        |
 
 **Table: `verification`**
 
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | TEXT | PRIMARY KEY | Unique identifier for each verification request. |
-| `identifier` | TEXT | NOT NULL | The identifier for the verification request (e.g., email address). |
-| `value` | TEXT | NOT NULL | The value to be verified (e.g., a token). |
-| `expiresAt` | INTEGER | NOT NULL | Unix timestamp of when the verification request expires. |
-| `createdAt` | INTEGER | NOT NULL | Unix timestamp of when the verification request was created. |
-| `updatedAt` | INTEGER | NOT NULL | Unix timestamp of when the verification request was last updated. |
+| Column       | Type    | Constraints | Description                                                        |
+| ------------ | ------- | ----------- | ------------------------------------------------------------------ |
+| `id`         | TEXT    | PRIMARY KEY | Unique identifier for each verification request.                   |
+| `identifier` | TEXT    | NOT NULL    | The identifier for the verification request (e.g., email address). |
+| `value`      | TEXT    | NOT NULL    | The value to be verified (e.g., a token).                          |
+| `expiresAt`  | INTEGER | NOT NULL    | Unix timestamp of when the verification request expires.           |
+| `createdAt`  | INTEGER | NOT NULL    | Unix timestamp of when the verification request was created.       |
+| `updatedAt`  | INTEGER | NOT NULL    | Unix timestamp of when the verification request was last updated.  |
 
 **Table: `notes`**
 
-| Column | Type | Constraints | Description |
-|---|---|---|---|
-| `id` | TEXT | PRIMARY KEY | Unique identifier (UUID or NanoID). |
-| `user_id` | TEXT | NOT NULL, FK → `user.id` | References the `user` table from better-auth. |
-| `content` | TEXT | NOT NULL | The TipTap rich text data stored as a stringified JSON object. |
-| `is_shared` | INTEGER | NOT NULL DEFAULT 0 | Boolean flag (0 = private, 1 = public). |
-| `created_at` | INTEGER | NOT NULL | Unix timestamp. |
-| `updated_at` | INTEGER | NOT NULL | Unix timestamp. |
+| Column      | Type    | Constraints              | Description                                                    |
+| ----------- | ------- | ------------------------ | -------------------------------------------------------------- |
+| `id`        | TEXT    | PRIMARY KEY              | Unique identifier (UUID or NanoID).                            |
+| `userId`    | TEXT    | NOT NULL, FK → `user.id` | References the `user` table from better-auth.                  |
+| `content`   | TEXT    | NOT NULL                 | The TipTap rich text data stored as a stringified JSON object. |
+| `isShared`  | INTEGER | NOT NULL DEFAULT 0       | Boolean flag (0 = private, 1 = public).                        |
+| `createdAt` | INTEGER | NOT NULL                 | Unix timestamp.                                                |
+| `updatedAt` | INTEGER | NOT NULL                 | Unix timestamp.                                                |
 
 ## 5. API Route Design (`/app/api/...`)
 
 All secured endpoints will first verify the session using better-auth. If no valid session exists, they will return a `401 Unauthorized`.
 
-| Endpoint | Method | Auth Required | Description |
-|---|---|---|---|
-| `/api/notes` | GET | Yes | Retrieves a list of all notes belonging to the authenticated user. |
-| `/api/notes` | POST | Yes | Creates a new note. Body: `{ content: string }`. |
-| `/api/notes/[id]` | GET | Yes | Retrieves a specific note for the author for editing. |
-| `/api/notes/[id]` | PUT | Yes | Updates a note's content or `is_shared` status. |
-| `/api/notes/[id]` | DELETE | Yes | Deletes a note belonging to the authenticated user. |
-| `/api/public/notes/[id]` | GET | No | Retrieves a note only if its `is_shared` flag is `1` (true). |
+| Endpoint                 | Method | Auth Required | Description                                                        |
+| ------------------------ | ------ | ------------- | ------------------------------------------------------------------ |
+| `/api/notes`             | GET    | Yes           | Retrieves a list of all notes belonging to the authenticated user. |
+| `/api/notes`             | POST   | Yes           | Creates a new note. Body: `{ content: string }`.                   |
+| `/api/notes/[id]`        | GET    | Yes           | Retrieves a specific note for the author for editing.              |
+| `/api/notes/[id]`        | PUT    | Yes           | Updates a note's content or `is_shared` status.                    |
+| `/api/notes/[id]`        | DELETE | Yes           | Deletes a note belonging to the authenticated user.                |
+| `/api/public/notes/[id]` | GET    | No            | Retrieves a note only if its `is_shared` flag is `1` (true).       |
 
 ## 6. UI & Editor Implementation
 
