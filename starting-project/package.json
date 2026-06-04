@@ -6,7 +6,8 @@
 		"dev": "bun run --bun next dev",
 		"build": "bun run --bun next build",
 		"start": "bun run --bun next start",
-		"lint": "eslint"
+		"lint": "eslint",
+		"watch": "bun --watch run build"
 	},
 	"dependencies": {
 		"@tiptap/pm": "^3.24.0",
