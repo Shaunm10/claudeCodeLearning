@@ -2,14 +2,13 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 
-export default async function NotePage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function DashboardPage() {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) redirect("/login");
 
-  const { id } = await params;
-  return <div>Note Page: {id}</div>;
+  return (
+    <main>
+      <p>Hello {session.user.name}</p>
+    </main>
+  );
 }
