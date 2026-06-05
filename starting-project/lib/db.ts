@@ -74,6 +74,7 @@ db.run(`
   CREATE TABLE IF NOT EXISTS notes (
     id TEXT PRIMARY KEY,
     userId TEXT NOT NULL,
+    title TEXT NOT NULL DEFAULT '',
     content TEXT NOT NULL,
     isShared INTEGER NOT NULL DEFAULT 0,
     createdAt INTEGER NOT NULL,
@@ -81,3 +82,9 @@ db.run(`
     FOREIGN KEY (userId) REFERENCES user(id)
   )
 `);
+
+try {
+  db.run("ALTER TABLE notes ADD COLUMN title TEXT NOT NULL DEFAULT ''");
+} catch {
+  // column already exists
+}
