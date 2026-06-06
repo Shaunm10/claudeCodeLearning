@@ -5,6 +5,7 @@ import StarterKit from "@tiptap/starter-kit";
 
 type TipTapEditorProps = {
   onUpdate: (json: object) => void;
+  initialContent?: object;
 };
 
 type ToolbarButtonProps = {
@@ -32,9 +33,10 @@ function ToolbarButton({ onClick, isActive, label, children }: ToolbarButtonProp
   );
 }
 
-export function TipTapEditor({ onUpdate }: TipTapEditorProps) {
+export function TipTapEditor({ onUpdate, initialContent }: TipTapEditorProps) {
   const editor = useEditor({
     immediatelyRender: false,
+    content: initialContent,
     extensions: [
       StarterKit.configure({
         code: false,

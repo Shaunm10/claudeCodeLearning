@@ -41,7 +41,7 @@ export default async function DashboardPage() {
               <li key={note.id}>
                 <Link
                   href={`/notes/${note.id}`}
-                  className="flex items-center justify-between rounded-xl border border-black/[0.08] px-5 py-4 transition-colors hover:bg-foreground/[0.04] dark:border-white/[0.08]"
+                  className="flex items-center justify-between rounded-xl border border-black/8 px-5 py-4 transition-colors hover:bg-foreground/4 dark:border-white/8"
                 >
                   <span className="font-medium">{note.title || "Untitled"}</span>
                   <span className="text-xs text-foreground/40">
