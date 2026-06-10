@@ -8,13 +8,16 @@ type Props = {
   noteId: string;
   initialTitle: string;
   initialContent: object;
+  initialIsShared: boolean;
 };
 
-export function NoteEditForm({ noteId, initialTitle, initialContent }: Props) {
+export function NoteEditForm({ noteId, initialTitle, initialContent, initialIsShared }: Props) {
   const router = useRouter();
   const [title, setTitle] = useState(initialTitle);
   const [error, setError] = useState("");
   const [isPending, setIsPending] = useState(false);
+  const [isShared, setIsShared] = useState(initialIsShared);
+  const [copied, setCopied] = useState(false);
   const contentRef = useRef<object>(initialContent);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -29,6 +32,7 @@ export function NoteEditForm({ noteId, initialTitle, initialContent }: Props) {
         body: JSON.stringify({
           title,
           content: JSON.stringify(contentRef.current),
+          isShared,
         }),
       });
 
@@ -44,6 +48,13 @@ export function NoteEditForm({ noteId, initialTitle, initialContent }: Props) {
     } finally {
       setIsPending(false);
     }
+  }
+
+  async function copyLink() {
+    const url = `${window.location.origin}/shared/${noteId}`;
+    await navigator.clipboard.writeText(url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   }
 
   return (
@@ -76,6 +87,49 @@ export function NoteEditForm({ noteId, initialTitle, initialContent }: Props) {
         />
       </div>
 
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center justify-between rounded-lg border border-black/[0.12] px-4 py-3 dark:border-white/[0.12]">
+          <div className="flex flex-col gap-0.5">
+            <span className="text-sm font-medium">Public sharing</span>
+            <span className="text-xs text-foreground/50">
+              Anyone with the link can view this note
+            </span>
+          </div>
+          <button
+            type="button"
+            role="switch"
+            aria-checked={isShared}
+            onClick={() => setIsShared((v) => !v)}
+            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+              isShared ? "bg-foreground" : "bg-foreground/20"
+            }`}
+          >
+            <span
+              className={`inline-block h-4 w-4 transform rounded-full bg-background transition-transform ${
+                isShared ? "translate-x-6" : "translate-x-1"
+              }`}
+            />
+          </button>
+        </div>
+
+        {isShared && (
+          <div className="flex items-center gap-2 rounded-lg bg-foreground/[0.04] px-4 py-3">
+            <span className="flex-1 truncate font-mono text-xs text-foreground/70">
+              {typeof window !== "undefined"
+                ? `${window.location.origin}/shared/${noteId}`
+                : `/shared/${noteId}`}
+            </span>
+            <button
+              type="button"
+              onClick={copyLink}
+              className="shrink-0 rounded px-2 py-1 text-xs font-medium text-foreground/60 transition-colors hover:bg-foreground/[0.06] hover:text-foreground"
+            >
+              {copied ? "Copied!" : "Copy link"}
+            </button>
+          </div>
+        )}
+      </div>
+
       {error && (
         <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600 dark:bg-red-950/30 dark:text-red-400">
           {error}
@@ -93,7 +147,7 @@ export function NoteEditForm({ noteId, initialTitle, initialContent }: Props) {
         <button
           type="button"
           onClick={() => router.push(`/notes/${noteId}`)}
-          className="rounded-lg px-5 py-2.5 text-sm font-medium text-foreground/60 hover:text-foreground transition-colors"
+          className="rounded-lg px-5 py-2.5 text-sm font-medium text-foreground/60 transition-colors hover:text-foreground"
         >
           Cancel
         </button>

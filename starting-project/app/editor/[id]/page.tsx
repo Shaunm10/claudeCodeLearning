@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 import { Header } from "@/components/ui/Header";
 import { NoteEditForm } from "@/components/editor/NoteEditForm";
 
-type NoteRow = { id: string; title: string; content: string };
+type NoteRow = { id: string; title: string; content: string; isShared: number };
 
 export default async function EditorPage({
   params,
@@ -17,7 +17,7 @@ export default async function EditorPage({
 
   const { id } = await params;
   const note = db
-    .query("SELECT id, title, content FROM notes WHERE id = ? AND userId = ?")
+    .query("SELECT id, title, content, isShared FROM notes WHERE id = ? AND userId = ?")
     .get(id, session.user.id) as NoteRow | undefined;
 
   if (!note) notFound();
@@ -33,6 +33,7 @@ export default async function EditorPage({
           noteId={note.id}
           initialTitle={note.title}
           initialContent={initialContent}
+          initialIsShared={note.isShared === 1}
         />
       </main>
     </>

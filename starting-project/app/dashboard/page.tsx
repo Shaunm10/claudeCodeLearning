@@ -5,7 +5,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { Header } from "@/components/ui/Header";
 
-type NoteRow = { id: string; title: string; createdAt: number };
+type NoteRow = { id: string; title: string; isShared: number; createdAt: number };
 
 export default async function DashboardPage() {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -13,7 +13,7 @@ export default async function DashboardPage() {
 
   const notes = db
     .query(
-      "SELECT id, title, createdAt FROM notes WHERE userId = ? ORDER BY updatedAt DESC",
+      "SELECT id, title, isShared, createdAt FROM notes WHERE userId = ? ORDER BY updatedAt DESC",
     )
     .all(session.user.id) as NoteRow[];
 
@@ -44,9 +44,16 @@ export default async function DashboardPage() {
                   className="flex items-center justify-between rounded-xl border border-black/8 px-5 py-4 transition-colors hover:bg-foreground/4 dark:border-white/8"
                 >
                   <span className="font-medium">{note.title || "Untitled"}</span>
-                  <span className="text-xs text-foreground/40">
-                    {new Date(note.createdAt).toLocaleDateString()}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    {note.isShared === 1 && (
+                      <span className="rounded-full bg-foreground/[0.06] px-2 py-0.5 text-xs text-foreground/50">
+                        Shared
+                      </span>
+                    )}
+                    <span className="text-xs text-foreground/40">
+                      {new Date(note.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
                 </Link>
               </li>
             ))}

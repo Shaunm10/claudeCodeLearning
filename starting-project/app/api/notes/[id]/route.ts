@@ -26,6 +26,7 @@ export async function GET(
 const updateNoteSchema = z.object({
   title: z.string().min(1, "Title is required"),
   content: z.string().min(1, "Content is required"),
+  isShared: z.boolean().default(false),
 });
 
 export async function PUT(
@@ -42,12 +43,12 @@ export async function PUT(
     return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 422 });
   }
 
-  const { title, content } = parsed.data;
+  const { title, content, isShared } = parsed.data;
   const now = Date.now();
 
   const result = db.run(
-    "UPDATE notes SET title = ?, content = ?, updatedAt = ? WHERE id = ? AND userId = ?",
-    [title, content, now, id, session.user.id],
+    "UPDATE notes SET title = ?, content = ?, isShared = ?, updatedAt = ? WHERE id = ? AND userId = ?",
+    [title, content, isShared ? 1 : 0, now, id, session.user.id],
   );
 
   if (result.changes === 0) {
