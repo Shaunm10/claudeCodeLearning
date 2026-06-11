@@ -6,6 +6,8 @@
 		"dev": "bun run --bun next dev",
 		"build": "bun run --bun next build",
 		"start": "bun run --bun next start",
+		"test": "bun --bun vitest run",
+		"test:watch": "bun --bun vitest",
 		"lint": "eslint",
 		"watch": "bun --watch run build"
 	},

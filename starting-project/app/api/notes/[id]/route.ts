@@ -1,8 +1,8 @@
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
-import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { updateNoteSchema } from "@/lib/validation";
 
 export async function GET(
   _req: Request,
@@ -22,12 +22,6 @@ export async function GET(
 
   return NextResponse.json({ note });
 }
-
-const updateNoteSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  content: z.string().min(1, "Content is required"),
-  isShared: z.boolean().default(false),
-});
 
 export async function PUT(
   req: Request,

@@ -1,13 +1,8 @@
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
-import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-
-const createNoteSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  content: z.string().min(1, "Content is required"),
-});
+import { createNoteSchema } from "@/lib/validation";
 
 export async function GET() {
   const session = await auth.api.getSession({ headers: await headers() });
